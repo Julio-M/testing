@@ -1,16 +1,10 @@
 # Create ECR Repo
 
-# Check if repository exists
-# ```
-# ~$ git ls-remote <existing_repo> -q
-# ~$ echo $?
-# 0
-#```
-
 # importing modules
 import os
 import shutil
 import subprocess
+import git
 
 class bcolors:
     HEADER = '\033[95m'
@@ -43,10 +37,41 @@ def check_for_repos(path,repositories,ssh_prefix):
             print('Fetching from github.....')
             subprocess.run(["git","-C",f"{path}", "clone", f"{ssh_prefix}/{repo}.git"])
 
-def check_for_staging_branch_service():
-    print('BRANCHES' + 'does not exist locally')
-    cmd = [ 'if','[git branch --list $hello]','then','echo','Branch name $branch_name already exists.','fi' ]
-    subprocess.run( cmd )
+# Checking for staging branch under new service repo and create it if it doesn't exist
+def check_for_staging_branch_service(path,service_name):
+    color_words(bcolors.WARNING ,'Checking for staging branch under new service repo')
+    try:
+        service_repo = git.Repo(os.path.join(f"{path}/{service_name}"))
+        branches = service_repo.references
+        if "origin/staging" in branches or "staging" in branches:
+            color_words(bcolors.BOLD ,'Branch staging exists')
+        else:
+            color_words(bcolors.WARNING ,'Branch staging does not exist')
+            color_words(bcolors.BOLD ,f'Creating new branch "staging" in {service_repo}')
+            service_repo.git.checkout('-b', 'staging')
+    except OSError as e:
+        print("Error: %s : %s" % (path,e.strerror))
+        color_words(bcolors.WARNING ,'Have you checked if the service repository exists?')
+
+# Add service repo name to create an ecr repository for the new service
+def add_input_to_existing_file(path,service_name):
+    try:
+        file_path = f"{path}/firstscript/inputs.hcl"
+        with open(file_path,"r") as f:
+            data = f.readlines()
+            print('DATA',data[-3][:-1])
+            data[-3] = data[-3][:-1] + ",\n"
+            data.insert(-2,f'        "{service_name}"\n')
+            # and write everything back
+            print(data)
+        color_words(bcolors.BOLD ,f'Editing file: {f.name}')
+        with open(file_path, 'w') as file:
+            file.writelines(data)
+        # f.write(f"{service_name}")
+        subprocess.run(["cat",f"{file_path}"])
+    except:
+        color_words(bcolors.FAIL ,'Failed to write')
+
 
 # You can choose to delete the directory that holds all the repos (maybe)?
 def delete_all(path):
@@ -59,6 +84,8 @@ def delete_all(path):
             color_words(bcolors.BOLD ,'Deleting deleted!')
         except OSError as e:
             print("Error: %s : %s" % (path, e.strerror))
+    else:
+        color_words(bcolors.BOLD ,f'You can find the directory here: {path}')
 
 if __name__ == "__main__":
     # Service name
@@ -73,5 +100,6 @@ if __name__ == "__main__":
     path = os.path.expanduser('~/Documents/code')
 
     check_for_repos(path,repositories,ssh_prefix)
-    # check_for_staging_branch_service()
+    check_for_staging_branch_service(path,service_name)
+    add_input_to_existing_file(path,service_name)
     delete_all(path)
