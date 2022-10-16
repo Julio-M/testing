@@ -35,11 +35,16 @@ def check_for_repos(path,repositories,ssh_prefix):
         else:
             print('Repository' + f' {bcolors.WARNING}{repo}{bcolors.ENDC} ' + 'does not exist locally')
             print('Fetching from github.....')
-            subprocess.run(["git","-C",f"{path}", "clone", f"{ssh_prefix}/{repo}.git"])
+            try:
+                repo = git.Repo.clone_from(f"{ssh_prefix}/{repo}.git", f"{path}/{repo}")
+                # subprocess.run(["git","-C",f"{path}", "clone", f"{ssh_prefix}/{repo}.git"])
+                print(repo)
+            except git.exc.GitCommandError as e:
+                color_words(bcolors.FAIL,str(e))
 
 # Checking for staging branch under new service repo and create it if it doesn't exist
 def check_for_staging_branch_service(path,service_name):
-    color_words(bcolors.WARNING ,'Checking for staging branch under new service repo')
+    color_words(bcolors.OKBLUE ,'Checking for staging branch under new service repo')
     try:
         service_repo = git.Repo(os.path.join(f"{path}/{service_name}"))
         branches = service_repo.references
@@ -50,27 +55,29 @@ def check_for_staging_branch_service(path,service_name):
             color_words(bcolors.BOLD ,f'Creating new branch "staging" in {service_repo}')
             service_repo.git.checkout('-b', 'staging')
     except OSError as e:
-        print("Error: %s : %s" % (path,e.strerror))
-        color_words(bcolors.WARNING ,'Have you checked if the service repository exists?')
+        color_words(bcolors.UNDERLINE ,'Have you checked if the service repository exists?')
 
 # Add service repo name to create an ecr repository for the new service
 def add_input_to_existing_file(path,service_name):
     try:
-        file_path = f"{path}/firstscript/inputs.hcl"
+        file_path = f"{path}/reddit-scrape/inputs.hcl"
+        new_service = f'        "{service_name}"\n'
         with open(file_path,"r") as f:
             data = f.readlines()
-            print('DATA',data[-3][:-1])
-            data[-3] = data[-3][:-1] + ",\n"
-            data.insert(-2,f'        "{service_name}"\n')
-            # and write everything back
-            print(data)
-        color_words(bcolors.BOLD ,f'Editing file: {f.name}')
-        with open(file_path, 'w') as file:
-            file.writelines(data)
-        # f.write(f"{service_name}")
-        subprocess.run(["cat",f"{file_path}"])
+            if f'        "{service_name}",\n' in data:
+                color_words(bcolors.BOLD ,f'{service_name} ECR repository exists')
+                return 
+            else:
+                print('DATA',data[-3][:-1])
+                data[-3] = data[-3][:-1] + ",\n"
+                data.insert(-2,new_service)
+                # and write everything back
+            color_words(bcolors.BOLD ,f'Editing file: {f.name}')
+            with open(file_path, 'w') as file:
+                file.writelines(data)
+            subprocess.run(["cat",f"{file_path}"])
     except:
-        color_words(bcolors.FAIL ,'Failed to write')
+        color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
 
 # You can choose to delete the directory that holds all the repos (maybe)?
