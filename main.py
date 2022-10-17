@@ -1,10 +1,9 @@
-# Create ECR Repo
-
 # importing modules
 import os
 import shutil
 import subprocess
 import git
+import uuid 
 
 class bcolors:
     HEADER = '\033[95m'
@@ -79,6 +78,12 @@ def add_input_to_existing_file(path,service_name):
     except:
         color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
+# # Add, commit, and push to ticket branch
+# def push_to_new_ticket_branch():
+#     try:
+
+#     except:
+
 
 # You can choose to delete the directory that holds all the repos (maybe)?
 def delete_all(path):
@@ -88,7 +93,7 @@ def delete_all(path):
         color_words(bcolors.BOLD ,'Deleting directory....')
         try:
             shutil.rmtree(path)
-            color_words(bcolors.BOLD ,'Deleting deleted!')
+            color_words(bcolors.BOLD ,'Directory deleted!')
         except OSError as e:
             print("Error: %s : %s" % (path, e.strerror))
     else:
@@ -98,6 +103,24 @@ if __name__ == "__main__":
     # Service name
     service_name = input('Service name: ')
 
+    # Github repository
+    github_repo = input(f'Github repo for service [{service_name}]: ') or service_name
+
+    # Ticket
+    ticket_number = input(f'Ticket number [tr- (random id)]: ') or f'tr-{uuid.uuid4().hex[:4]}'
+
+    # Branch name (keep it to 3 letters)
+    valid=False
+    while not valid:
+        branch_n = input(f'Branch name (3 letters): ')
+        if len(branch_n)%3==0:
+            valid=True
+        else:
+            color_words(bcolors.WARNING,'Branch name must be 3 letters')
+    
+    branch_name = ticket_number + "-" + branch_n
+
+    print(branch_name)
     # SSH prefix
     ssh_prefix = 'git@github.com:Julio-M'
     # List of repositories needed for the service
@@ -106,7 +129,7 @@ if __name__ == "__main__":
     # Specify path
     path = os.path.expanduser('~/Documents/code')
 
-    check_for_repos(path,repositories,ssh_prefix)
-    check_for_staging_branch_service(path,service_name)
-    add_input_to_existing_file(path,service_name)
+    # check_for_repos(path,repositories,ssh_prefix)
+    # check_for_staging_branch_service(path,service_name)
+    # add_input_to_existing_file(path,service_name)
     delete_all(path)
