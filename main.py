@@ -57,26 +57,28 @@ def check_for_staging_branch_service(path,service_name):
         color_words(bcolors.UNDERLINE ,'Have you checked if the service repository exists?')
 
 # Add service repo name to create an ecr repository for the new service
+# file_path = f"{path}/infra-terrafrom/environments/global/iam/inputs.hcl"
 def add_input_to_existing_file(path,service_name):
-    try:
-        file_path = f"{path}/reddit-scrape/inputs.hcl"
-        new_service = f'        "{service_name}"\n'
-        with open(file_path,"r") as f:
-            data = f.readlines()
-            if f'        "{service_name}",\n' in data:
-                color_words(bcolors.BOLD ,f'{service_name} ECR repository exists')
-                return 
-            else:
-                print('DATA',data[-3][:-1])
-                data[-3] = data[-3][:-1] + ",\n"
-                data.insert(-2,new_service)
-                # and write everything back
-            color_words(bcolors.BOLD ,f'Editing file: {f.name}')
-            with open(file_path, 'w') as file:
-                file.writelines(data)
-            subprocess.run(["cat",f"{file_path}"])
-    except:
-        color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
+    enviroments = ["staging/global/ecr","global/iam"]
+    for env in enviroments:
+        try:
+            file_path = f"{path}/infra-terrafrom/environments/{env}/inputs.hcl"
+            new_service = f'   "{service_name}"\n'
+            with open(file_path,"r") as f:
+                data = f.readlines()
+                if f'   "{service_name}",\n' in data or new_service in data:
+                    color_words(bcolors.BOLD ,f'{service_name} exists in {env}')
+                else:
+                    print('DATA',data[-3][:-1])
+                    data[-3] = data[-3][:-1] + ",\n"
+                    data.insert(-2,new_service)
+                    # and write everything back
+                    color_words(bcolors.BOLD ,f'Editing file: {f.name}')
+                    with open(file_path, 'w') as file:
+                        file.writelines(data)
+                    subprocess.run(["cat",f"{file_path}"])
+        except:
+            color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
@@ -122,14 +124,14 @@ if __name__ == "__main__":
 
     print(branch_name)
     # SSH prefix
-    ssh_prefix = 'git@github.com:Julio-M'
+    ssh_prefix = 'git@github.com:amun'
     # List of repositories needed for the service
-    repositories = [service_name,'testing', 'firstscript', 'web-scrape']
+    repositories = [service_name,'infra-terrafrom']
 
     # Specify path
     path = os.path.expanduser('~/Documents/code')
 
-    # check_for_repos(path,repositories,ssh_prefix)
-    # check_for_staging_branch_service(path,service_name)
-    # add_input_to_existing_file(path,service_name)
+    check_for_repos(path,repositories,ssh_prefix)
+    check_for_staging_branch_service(path,service_name)
+    add_input_to_existing_file(path,service_name)
     delete_all(path)
