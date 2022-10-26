@@ -3,7 +3,8 @@ import os
 import shutil
 import subprocess
 import git
-import uuid 
+import uuid
+from pathlib import Path
 
 class bcolors:
     HEADER = '\033[95m'
@@ -57,7 +58,6 @@ def check_for_staging_branch_service(path,service_name):
         color_words(bcolors.UNDERLINE ,'Have you checked if the service repository exists?')
 
 # Add service repo name to create an ecr repository for the new service
-# file_path = f"{path}/infra-terrafrom/environments/global/iam/inputs.hcl"
 def add_input_to_existing_file(path,service_name):
     enviroments = ["staging/global/ecr","global/iam"]
     for env in enviroments:
@@ -80,6 +80,78 @@ def add_input_to_existing_file(path,service_name):
         except:
             color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
+# Add container image build and publish pipeline
+def add_container_image_build(path,service_name):
+    work_path = f'{path}/{service_name}/.github/workflows'
+    try:
+        os.makedirs(work_path)
+        print("Directory '%s' created successfully" %work_path)
+    except OSError as error:
+        print(error)
+        print("Directory '%s' can not be created" %work_path)
+    # Path(f'{work_path}/build-and-push-image.yaml').touch()
+    f = open(f'{work_path}/build-and-push-image.yaml', "a")
+    f.write(f'''name: Build and Push Container Image to ECR
+
+on: 
+  push:
+    branches:
+      - staging
+      - production
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2     
+
+      - name: Build and Push
+        uses: amun/infra-shared-workflows/build-and-push-image@main
+        with:
+          aws_account_id: "764933035250"
+          region: us-east-2
+          repo: "{service_name}-${{ github.base_ref || github.ref_name }}"
+          build_context: .
+          dockerfile_path: "./Dockerfile"
+''')
+    
+def add_service_account(path,service_name):
+    serv_under = service_name.replace("-","_")
+    work_path = f'{path}/infra-terrafrom/modules/eks-serviceaccounts'
+    f = open(f'{work_path}/{service_name}_role.tf', "a")
+    f.write(f'''module "{serv_under}_role" {{
+    source      = "cloudposse/eks-iam-role/aws"
+    version     = ">= 0.11.1"
+
+    aws_account_number          = data.aws_caller_identity.current.account_id
+    eks_cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
+
+    # Create a role for the service account named `{serv_under}` in the Kubernetes namespace `{serv_under}`
+    service_account_name      = "${{var.environment_code}}-${{var.resource_region}}-{service_name}-sa"
+    service_account_namespace = "{service_name}"
+    # JSON IAM policy document to assign to the service account role
+    aws_iam_policy_document   = [data.aws_iam_policy_document.{serv_under}.json]
+    }}
+
+    data "aws_iam_policy_document" "{serv_under}" {{
+    statement {{
+        sid = "AllowAllOnS3Objects"
+
+        actions = [
+        "s3:*"
+        ]
+
+        effect    = "Allow"
+        resources = ["*"]
+    }}
+    }}''')
+    
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
 #     try:
@@ -134,4 +206,6 @@ if __name__ == "__main__":
     check_for_repos(path,repositories,ssh_prefix)
     check_for_staging_branch_service(path,service_name)
     add_input_to_existing_file(path,service_name)
+    add_container_image_build(path,service_name)
+    add_service_account(path,service_name)
     delete_all(path)
