@@ -229,7 +229,6 @@ def create_apps_base_helm_release(path,service_name):
         with open(file_path,"r") as f:
             data = f.readlines()
             if new_service in data:
-                print(data[3])
                 color_words(bcolors.BOLD ,f'{service_name} exists in {env}')
             else:
                 data.insert(4,new_service)
@@ -241,9 +240,72 @@ def create_apps_base_helm_release(path,service_name):
     except:
         color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
     
-    
-    
+def add_image_policy(service_name,path,env,region):
+    # Add the image policy to imag-update-automation
+    try:
+        file_path = f"{path}/infra-gitops/infrastructure/{env}/{region}/image-update-automation/imagepolicy.yaml"
+        new_service = f'''---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {service_name}
+spec:
+  imageRepositoryRef:
+    name: {service_name}
+  filterTags:
+    pattern: '^staging-[a-fA-F0-9]+-(?P<rn>[0-9]+)'
+    extract: '$rn'
+  policy:
+     numerical:
+      order: asc'''
+        with open(file_path,"r") as f:
+            data = f.readlines()
+            if f'    name: {service_name}\n' in data:
+                color_words(bcolors.BOLD ,f'{service_name} exists in {env}/{region}')
+            else:
+                with open(file_path, 'a') as file:
+                    file.write(f'{new_service}\n')
+                subprocess.run(["cat",f"{file_path}"])
+    except:
+        color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
+def add_image_policy_udpateautomatio(service_name,path,env,region):
+    try:
+        file_path = f"{path}/infra-gitops/infrastructure/{env}/{region}/image-update-automation/imageupdateautomation.yaml"
+        new_service = f'''---
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImageUpdateAutomation
+metadata:
+  name: {service_name}
+spec:
+  interval: 1m0s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: ${{cluster_environment}}
+    commit:
+      author:
+        email: fluxcdbot@users.noreply.github.com
+        name: fluxcdbot
+      messageTemplate: "{{range .Updated.Images}}{{println .}}{{end}}"
+    push:
+      branch: ${{cluster_environment}}
+  update:
+    path: ./apps/${{cluster_environment}}/${{cluster_region}}/{service_name}
+    strategy: Setters'''
+        with open(file_path,"r") as f:
+            data = f.readlines()
+            if f'  name: {service_name}\n' in data:
+                color_words(bcolors.BOLD ,f'{service_name} exists in {env}/{region}/imageupdateautomation.yaml')
+            else:
+                with open(file_path, 'a') as file:
+                    file.write(f'{new_service}\n')
+                subprocess.run(["cat",f"{file_path}"])
+    except:
+        color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
 #     try:
@@ -275,6 +337,11 @@ if __name__ == "__main__":
     # Ticket
     ticket_number = input(f'Ticket number [tn- (random id)]: ') or f'tn-{uuid.uuid4().hex[:4]}'
 
+    # Enviroment
+    env = input(f'Enviroment [staging]: ') or f'staging'
+
+    region = input(f'Region [us-west-2]: ') or f'us-west-2'
+
     # Branch name (keep it to 3 letters)
     valid=False
     while not valid:
@@ -302,4 +369,6 @@ if __name__ == "__main__":
     add_service_account(path,service_name)
     create_helm_chart(path,service_name)
     create_apps_base_helm_release(path,service_name)
+    add_image_policy(service_name,path,env,region)
+    add_image_policy_udpateautomatio(service_name,path,env,region)
     delete_all(path)
