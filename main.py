@@ -196,8 +196,10 @@ def create_helm_chart(path,service_name):
 def create_apps_base_helm_release(path,service_name):
     work_path = f'{path}/infra-gitops/apps/base/{service_name}'
     work_path2 = f'{path}/infra-gitops/sources/image-repos/{service_name}.yaml'
-    work_path3 = f'{path}/infra-gitops/sources'
     src_dir = f'{path}/infra-gitops'
+
+    # Add service name, release patch, kustomization, etc
+
     try:
         src_dir1 = f'{src_dir}/apps/base/lima-cms'
         dest_dir1 = work_path
@@ -207,6 +209,9 @@ def create_apps_base_helm_release(path,service_name):
     except OSError as error:
         print(error)
         print("Directory '%s' can not be created" %work_path)
+
+    # Add image repository
+
     try:
         src_dir2= f'{src_dir}/sources/image-repos/lima-cms.yaml'
         dest_dir2 = work_path2
@@ -215,6 +220,29 @@ def create_apps_base_helm_release(path,service_name):
     except OSError as error:
         print(error)
         print("Directory '%s' can not be created" %work_path2)
+    
+    # Add the image-repo to kustomization file
+
+    try:
+        file_path = f"{src_dir}/sources/kustomization.yaml"
+        new_service = f'- image-repos/{service_name}.yaml\n'
+        with open(file_path,"r") as f:
+            data = f.readlines()
+            if new_service in data:
+                print(data[3])
+                color_words(bcolors.BOLD ,f'{service_name} exists in {env}')
+            else:
+                data.insert(4,new_service)
+                # and write everything back
+                color_words(bcolors.BOLD ,f'Editing file: {f.name}')
+                with open(file_path, 'w') as file:
+                    file.writelines(data)
+                subprocess.run(["cat",f"{file_path}"])
+    except:
+        color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
+    
+    
+    
 
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
