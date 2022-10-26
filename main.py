@@ -174,6 +174,7 @@ def create_helm_chart(path,service_name):
                 s = s.replace('lima-cms', f'{service_name}')
             with open(filepath, "w") as file:
                 file.write(s)
+        color_words(bcolors.BOLD ,f'You see the helm-chart files here: {dest_dir}')
     except OSError as error:
         print(error)
         print("Directory '%s' can not be created" %work_path)
@@ -207,7 +208,7 @@ if __name__ == "__main__":
     github_repo = input(f'Github repo for service [{service_name}]: ') or service_name
 
     # Ticket
-    ticket_number = input(f'Ticket number [tr- (random id)]: ') or f'tr-{uuid.uuid4().hex[:4]}'
+    ticket_number = input(f'Ticket number [tn- (random id)]: ') or f'tn-{uuid.uuid4().hex[:4]}'
 
     # Branch name (keep it to 3 letters)
     valid=False
