@@ -5,6 +5,8 @@ import subprocess
 import git
 import uuid
 from pathlib import Path
+import glob
+import shutil
 
 class bcolors:
     HEADER = '\033[95m'
@@ -120,7 +122,8 @@ jobs:
           build_context: .
           dockerfile_path: "./Dockerfile"
 ''')
-    
+
+# Add a new service account role
 def add_service_account(path,service_name):
     serv_under = service_name.replace("-","_")
     work_path = f'{path}/infra-terrafrom/modules/eks-serviceaccounts'
@@ -151,6 +154,29 @@ def add_service_account(path,service_name):
         resources = ["*"]
     }}
     }}''')
+    color_words(bcolors.BOLD ,f'You see the file here: {work_path}/{service_name}_role.tf')
+
+def create_helm_chart(path,service_name):
+    work_path = f'{path}/infra-charts/{service_name}'
+    try:
+        # path to source directory
+        src_dir = f'{path}/infra-charts/lima-cms'
+        # path to destination directory
+        dest_dir = work_path
+        ## getting all the files in the source directory
+        files = os.listdir(src_dir)
+        shutil.copytree(src_dir, dest_dir)
+        print("Directory '%s' created successfully" %work_path)
+        newfiles=os.listdir(dest_dir)
+        for filepath in glob.iglob(f'{dest_dir}/**/*.*', recursive=True):
+            with open(filepath) as file:
+                s = file.read()
+                s = s.replace('lima-cms', f'{service_name}')
+            with open(filepath, "w") as file:
+                file.write(s)
+    except OSError as error:
+        print(error)
+        print("Directory '%s' can not be created" %work_path)
     
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
@@ -198,7 +224,7 @@ if __name__ == "__main__":
     # SSH prefix
     ssh_prefix = 'git@github.com:amun'
     # List of repositories needed for the service
-    repositories = [service_name,'infra-terrafrom']
+    repositories = [service_name,'infra-terrafrom','infra-charts']
 
     # Specify path
     path = os.path.expanduser('~/Documents/code')
@@ -208,4 +234,5 @@ if __name__ == "__main__":
     add_input_to_existing_file(path,service_name)
     add_container_image_build(path,service_name)
     add_service_account(path,service_name)
+    create_helm_chart(path,service_name)
     delete_all(path)
