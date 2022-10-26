@@ -197,7 +197,7 @@ def create_apps_base_helm_release(path,service_name):
     work_path = f'{path}/infra-gitops/apps/base/{service_name}'
     work_path2 = f'{path}/infra-gitops/sources/image-repos/{service_name}.yaml'
     work_path3 = f'{path}/infra-gitops/sources'
-    src_dir = f'{path}/infra-gitops/'
+    src_dir = f'{path}/infra-gitops'
     try:
         src_dir1 = f'{src_dir}/apps/base/lima-cms'
         dest_dir1 = work_path
@@ -262,7 +262,7 @@ if __name__ == "__main__":
     # SSH prefix
     ssh_prefix = 'git@github.com:amun'
     # List of repositories needed for the service
-    repositories = [service_name,'infra-terrafrom','infra-charts']
+    repositories = [service_name,'infra-terrafrom','infra-charts','infra-gitops']
 
     # Specify path
     path = os.path.expanduser('~/Documents/code')
