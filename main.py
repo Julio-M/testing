@@ -19,8 +19,21 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+# Helper methods for refactoring
 def color_words(color,word):
      print(color+word+bcolors.ENDC)
+
+def replace_words_in_files(destination_dir,word_to_replace,new_word):
+    newfiles=os.listdir(destination_dir)
+    for filepath in glob.iglob(f'{destination_dir}/**/*.*', recursive=True):
+        with open(filepath) as file:
+            s = file.read()
+            s = s.replace(word_to_replace, f'{new_word}')
+        with open(filepath, "w") as file:
+            file.write(s)
+
+def copy_files_from_folder():
+    return
 
 # check whether the specified repositories exist
 def check_for_repos(path,repositories,ssh_prefix):
@@ -167,18 +180,25 @@ def create_helm_chart(path,service_name):
         files = os.listdir(src_dir)
         shutil.copytree(src_dir, dest_dir)
         print("Directory '%s' created successfully" %work_path)
-        newfiles=os.listdir(dest_dir)
-        for filepath in glob.iglob(f'{dest_dir}/**/*.*', recursive=True):
-            with open(filepath) as file:
-                s = file.read()
-                s = s.replace('lima-cms', f'{service_name}')
-            with open(filepath, "w") as file:
-                file.write(s)
+        replace_words_in_files(dest_dir,'lima-cms',service_name)
         color_words(bcolors.BOLD ,f'You see the helm-chart files here: {dest_dir}')
     except OSError as error:
         print(error)
         print("Directory '%s' can not be created" %work_path)
-    
+
+def create_apps_base_helm_release(path,service_name):
+    work_path = f'{path}/infra-gitops/apps/base/{service_name}'
+    src_dir = f'{path}/infra-gitops/'
+    try:
+        src_dir1 = f'{src_dir}/apps/base/lima-cms'
+        dest_dir1 = work_path
+        shutil.copytree(src_dir1, dest_dir1)
+        print("Directory '%s' created successfully" %work_path)
+        replace_words_in_files(dest_dir1,'lima-cms',service_name)
+    except OSError as error:
+        print(error)
+        print("Directory '%s' can not be created" %work_path)
+
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
 #     try:
@@ -236,4 +256,5 @@ if __name__ == "__main__":
     add_container_image_build(path,service_name)
     add_service_account(path,service_name)
     create_helm_chart(path,service_name)
+    create_apps_base_helm_release(path,service_name)
     delete_all(path)
