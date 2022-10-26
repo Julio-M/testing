@@ -35,6 +35,13 @@ def replace_words_in_files(destination_dir,word_to_replace,new_word):
 def copy_files_from_folder():
     return
 
+def replace_words_in_one_file(filepath,word_to_replace,new_word):
+    with open(filepath) as file:
+        s = file.read()
+        s = s.replace(word_to_replace, f'{new_word}')
+    with open(filepath, "w") as file:
+        file.write(s)
+
 # check whether the specified repositories exist
 def check_for_repos(path,repositories,ssh_prefix):
     if not os.path.exists(path):
@@ -188,6 +195,8 @@ def create_helm_chart(path,service_name):
 
 def create_apps_base_helm_release(path,service_name):
     work_path = f'{path}/infra-gitops/apps/base/{service_name}'
+    work_path2 = f'{path}/infra-gitops/sources/image-repos/{service_name}.yaml'
+    work_path3 = f'{path}/infra-gitops/sources'
     src_dir = f'{path}/infra-gitops/'
     try:
         src_dir1 = f'{src_dir}/apps/base/lima-cms'
@@ -198,6 +207,14 @@ def create_apps_base_helm_release(path,service_name):
     except OSError as error:
         print(error)
         print("Directory '%s' can not be created" %work_path)
+    try:
+        src_dir2= f'{src_dir}/sources/image-repos/lima-cms.yaml'
+        dest_dir2 = work_path2
+        shutil.copy(src_dir2, dest_dir2)
+        replace_words_in_one_file(dest_dir2,"lima-cms",service_name)
+    except OSError as error:
+        print(error)
+        print("Directory '%s' can not be created" %work_path2)
 
 # # Add, commit, and push to ticket branch
 # def push_to_new_ticket_branch():
