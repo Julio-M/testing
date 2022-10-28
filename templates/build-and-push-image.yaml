@@ -1,0 +1,28 @@
+name: Build and Push Container Image to ECR
+
+on: 
+  push:
+    branches:
+      - staging
+      - production
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2     
+
+      - name: Build and Push
+        uses: amun/infra-shared-workflows/build-and-push-image@main
+        with:
+          aws_account_id: "764933035250"
+          region: us-east-2
+          repo: "template-${ github.base_ref || github.ref_name }"
+          build_context: .
+          dockerfile_path: "./Dockerfile"

@@ -98,7 +98,7 @@ def add_input_to_existing_file(path,service_name):
                     color_words(bcolors.BOLD ,f'Editing file: {f.name}')
                     with open(file_path, 'w') as file:
                         file.writelines(data)
-                    subprocess.run(["cat",f"{file_path}"])
+                    # subprocess.run(["cat",f"{file_path}"])
         except:
             color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
@@ -106,74 +106,34 @@ def add_input_to_existing_file(path,service_name):
 def add_container_image_build(path,service_name):
     work_path = f'{path}/{service_name}/.github/workflows'
     try:
-        os.makedirs(work_path)
+        # path to source directory
+        if not os.path.exists(work_path):
+            os.makedirs(work_path)
+        src_dir = f'templates/build-and-push-image.yaml'
+        # path to destination directory
+        dest_dir = f'{work_path}/build-and-push-image.yaml'
+        shutil.copy(src_dir, dest_dir)
         print("Directory '%s' created successfully" %work_path)
+        replace_words_in_one_file(dest_dir,'template',service_name)
+        color_words(bcolors.BOLD ,f'See the build file here: {dest_dir}')
     except OSError as error:
         print(error)
         print("Directory '%s' can not be created" %work_path)
     # Path(f'{work_path}/build-and-push-image.yaml').touch()
-    f = open(f'{work_path}/build-and-push-image.yaml', "a")
-    f.write(f'''name: Build and Push Container Image to ECR
-
-on: 
-  push:
-    branches:
-      - staging
-      - production
-
-jobs:
-  build-and-push:
-    runs-on: self-hosted
-
-    permissions:
-      contents: read
-      id-token: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2     
-
-      - name: Build and Push
-        uses: amun/infra-shared-workflows/build-and-push-image@main
-        with:
-          aws_account_id: "764933035250"
-          region: us-east-2
-          repo: "{service_name}-${{ github.base_ref || github.ref_name }}"
-          build_context: .
-          dockerfile_path: "./Dockerfile"
-''')
 
 # Add a new service account role
 def add_service_account(path,service_name):
     serv_under = service_name.replace("-","_")
     work_path = f'{path}/infra-terrafrom/modules/eks-serviceaccounts'
-    f = open(f'{work_path}/{service_name}_role.tf', "a")
-    f.write(f'''module "{serv_under}_role" {{
-    source      = "cloudposse/eks-iam-role/aws"
-    version     = ">= 0.11.1"
-
-    aws_account_number          = data.aws_caller_identity.current.account_id
-    eks_cluster_oidc_issuer_url = var.cluster_oidc_issuer_url
-
-    # Create a role for the service account named `{serv_under}` in the Kubernetes namespace `{serv_under}`
-    service_account_name      = "${{var.environment_code}}-${{var.resource_region}}-{service_name}-sa"
-    service_account_namespace = "{service_name}"
-    # JSON IAM policy document to assign to the service account role
-    aws_iam_policy_document   = [data.aws_iam_policy_document.{serv_under}.json]
-    }}
-
-    data "aws_iam_policy_document" "{serv_under}" {{
-    statement {{
-        sid = "AllowAllOnS3Objects"
-
-        actions = [
-        "s3:*"
-        ]
-
-        effect    = "Allow"
-        resources = ["*"]
-    }}
-    }}''')
+    try:
+        src_dir= f'./templates/service_role.tf'
+        dest_dir = f'{work_path}/{serv_under}_role.tf'
+        shutil.copy(src_dir, dest_dir)
+        replace_words_in_one_file(dest_dir,"template-service-script",service_name)
+        replace_words_in_one_file(dest_dir,"template_service_script",serv_under)
+    except OSError as error:
+        print(error)
+        print("Directory '%s' can not be created" %work_path)
     color_words(bcolors.BOLD ,f'You see the file here: {work_path}/{service_name}_role.tf')
 
 def create_helm_chart(path,service_name):
@@ -236,7 +196,7 @@ def create_apps_base_helm_release(path,service_name):
                 color_words(bcolors.BOLD ,f'Editing file: {f.name}')
                 with open(file_path, 'w') as file:
                     file.writelines(data)
-                subprocess.run(["cat",f"{file_path}"])
+                # subprocess.run(["cat",f"{file_path}"])
     except:
         color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
     
@@ -265,7 +225,7 @@ spec:
             else:
                 with open(file_path, 'a') as file:
                     file.write(f'{new_service}\n')
-                subprocess.run(["cat",f"{file_path}"])
+                # subprocess.run(["cat",f"{file_path}"])
     except:
         color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 
@@ -303,7 +263,7 @@ spec:
             else:
                 with open(file_path, 'a') as file:
                     file.write(f'{new_service}\n')
-                subprocess.run(["cat",f"{file_path}"])
+                # subprocess.run(["cat",f"{file_path}"])
     except:
         color_words(bcolors.FAIL ,f'Failed to write. Does {file_path} exist?')
 # # Add, commit, and push to ticket branch
@@ -372,3 +332,5 @@ if __name__ == "__main__":
     add_image_policy(service_name,path,env,region)
     add_image_policy_udpateautomatio(service_name,path,env,region)
     delete_all(path)
+
+    # ENSURE WHEN BUILD IMAGE EXISTS ADDITIONAL ONE DOES NOT GET ADDED
