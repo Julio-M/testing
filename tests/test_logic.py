@@ -3,7 +3,11 @@ import unittest
 import os
 
 # custom imports
-from main import check_for_repos, copy_files_from_folder
+from main import (
+    check_for_repos,
+    copy_files_from_folder,
+    check_for_staging_branch_service,
+)
 
 
 class TestMain(unittest.TestCase):
@@ -18,7 +22,10 @@ class TestMain(unittest.TestCase):
         repositories = [service_name, "infra-terrafrom", "infra-charts", "infra-gitops"]
         path = os.path.expanduser("~/Documents/code")
         ssh_prefix = "git@github.com:amun"
-        self.assertEqual(False, check_for_repos(path, repositories, ssh_prefix))
+        self.assertEqual(
+            {"message": "Repository might not exist"},
+            check_for_repos(path, repositories, ssh_prefix),
+        )
 
     # Test to see if the service repo does exist
     def test_check_for_repos_right_service_name(self):
@@ -26,4 +33,6 @@ class TestMain(unittest.TestCase):
         repositories = [service_name, "infra-terrafrom", "infra-charts", "infra-gitops"]
         path = os.path.expanduser("~/Documents/code")
         ssh_prefix = "git@github.com:amun"
-        self.assertEqual(repositories, check_for_repos(path, repositories, ssh_prefix))
+        self.assertEqual(
+            {"message": repositories}, check_for_repos(path, repositories, ssh_prefix)
+        )

@@ -76,8 +76,8 @@ def check_for_repos(path, repositories, ssh_prefix):
                 print(my_repo)
             except git.exc.GitCommandError as e:
                 color_words(bcolors.FAIL, str(e))
-                return False
-    return repositories
+                return {"message": "Repository might not exist"}
+    return {"message": repositories}
 
 
 # Checking for staging branch under new service repo and create it if it doesn't exist
@@ -94,10 +94,15 @@ def check_for_staging_branch_service(path, service_name):
                 bcolors.BOLD, f'Creating new branch "staging" in {service_repo}'
             )
             service_repo.git.checkout("-b", "staging")
+            color_words(
+                bcolors.OKBLUE, f"See list of branches\n{service_repo.git.branch()}"
+            )
+            return {"message": "Branch created"}
     except OSError as e:
         color_words(
             bcolors.UNDERLINE, "Have you checked if the service repository exists?"
         )
+        return {"message": "Does the repository exist"}
 
 
 # Add service repo name to create an ecr repository for the new service
@@ -354,7 +359,9 @@ if __name__ == "__main__":
     # Specify path
     path = os.path.expanduser("~/Documents/code")
 
-    if check_for_repos(path, repositories, ssh_prefix) == False:
+    if check_for_repos(path, repositories, ssh_prefix) == {
+        "message": "Repository might not exist"
+    }:
         exit()
     else:
         check_for_staging_branch_service(path, service_name)
