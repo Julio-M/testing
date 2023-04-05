@@ -67,9 +67,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.prepare.outputs.ref-name == 'release' && github.event_name == 'release' }}
     steps:
-      - name: Checkout repository
+      - name: Checkout repository branch release
         uses: actions/checkout@v3
         with:
+          ref: release
           fetch-depth: 0
 
       - name: Get version of the tag
@@ -82,11 +83,11 @@ jobs:
       - name: Patch the version
         run: |
           sed -i "s/\"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/\"version\": \"$TAG\"/g" package.json
-      
-      - name: Commit the version
+
+      - name: Path version npm
         run: |
-          git config --local user.email "example@example.com"
-          git config --local user.name "example" 
-          git add package.json
-          git commit -m "Update version to $TAG"
+          npm version $TAG -m 'chore(release): %s'
+      
+      - name: Push version
+        run: |
           git push
