@@ -94,9 +94,9 @@ jobs:
         run: |
           sed -i "s/\"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/\"version\": \"$TAG\"/g" package.json
 
-      - name: Path version npm
+      - name: Path version npm=
         run: |
-          npm version $TAG -m 'chore(release): %s'
+          npm version $TAG --no-git-tag-version
       
       - name: Push version
         run: |
