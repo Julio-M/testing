@@ -100,6 +100,9 @@ jobs:
           npm version $TAG --no-git-tag-version
           echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
       
+      - name: Print package.json
+        run: cat package.json
+
       - name: Print the version
         run: echo $VERSION
       
