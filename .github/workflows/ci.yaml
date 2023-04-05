@@ -1,4 +1,5 @@
 name: Set up
+
 on:
   push:
     branches:
@@ -20,14 +21,14 @@ jobs:
           SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
           if [[ ${{ github.ref_name }} == "main" ]]; then
             echo "REF_NAME=main" >> $GITHUB_ENV
+          elif [[ ${{ github.ref_name }} == "dev" ]]; then
+            echo "REF_NAME=dev" >> $GITHUB_ENV
           elif [[ ${{ github.ref_name }} == "release" ]]; then
             echo "REF_NAME=release" >> $GITHUB_ENV
-          elif [[ ${{ github.ref_name}} == "dev" ]]; then
-            echo "REF_NAME=dev" >> $GITHUB_ENV
-          elif[[ ${{ github.ref_name }} =~ $SEMVER_REGEX ]]; then
-            echo "REF_NAME=release" >> $GITHUB_ENV
+          elif [[ ${{ github.ref_name }} =~ $SEMVER_REGEX ]]; then
+            echo "REF_NAME=main" >> $GITHUB_ENV
           else
-            echo -e "\033[31m Ref ${{ github.ref_name }} does not match dev, release, main or semver pattern vx.x.x! Aborting build!"
+            echo -e "\033[31m Ref ${{ github.ref_name }} does not match! Aborting version!"
             exit 1
           fi
       
