@@ -72,6 +72,16 @@ jobs:
         with:
           ref: release
           fetch-depth: 0
+      
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Configure
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'example@example.com'
 
       - name: Get version of the tag
         run: |
