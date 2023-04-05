@@ -77,6 +77,11 @@ jobs:
         run: |
           git fetch --all
           git pull --all
+
+      - name: Git config
+        run: |
+          git config --global user.email "github-actions@example.com"
+          git config --global user.name "github-actions"
       
       - name: Use Node.js 16
         uses: actions/setup-node@v3
