@@ -26,7 +26,7 @@ jobs:
           elif [[ ${{ github.ref_name }} == "release" ]]; then
             echo "REF_NAME=release" >> $GITHUB_ENV
           elif [[ ${{ github.ref_name }} =~ $SEMVER_REGEX ]]; then
-            echo "REF_NAME=main" >> $GITHUB_ENV
+            echo "REF_NAME=release" >> $GITHUB_ENV
           else
             echo -e "\033[31m Ref ${{ github.ref_name }} does not match! Aborting version!"
             exit 1
