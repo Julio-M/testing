@@ -53,6 +53,10 @@ jobs:
             exit 1
           fi
 
+      - name: Print the REF NAME
+        run:
+          echo ${{ env.REF_NAME }}
+
     outputs:
       ref-name: ${{ env.REF_NAME }}
 
