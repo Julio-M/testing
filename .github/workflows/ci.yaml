@@ -78,3 +78,15 @@ jobs:
 
       - name: Print the tag
         run: echo $TAG
+
+      - name: Patch the version
+        run: |
+          sed -i "s/\"version\": \"[0-9]*\.[0-9]*\.[0-9]*\"/\"version\": \"$TAG\"/g" package.json
+      
+      - name: Commit the version
+        run: |
+          git config --local user.email "example@example.com"
+          git config --local user.name "example" 
+          git add package.json
+          git commit -m "Update version to $TAG"
+          git push
