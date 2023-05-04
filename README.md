@@ -2,3 +2,4 @@
 this repo is only for testing purposes
 test releases
 tag releases
+sign releases
