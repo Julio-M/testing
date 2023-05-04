@@ -53,20 +53,10 @@ jobs:
             echo "not-release"
             echo "REF_NAME=not-release" >> $GITHUB_ENV
           fi
-      
-      # Checkout repository
-      - name: Checkout repository
-        if: ${{ env.REF_NAME == 'release' && github.event_name == 'release' }}
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Print the REF NAME
-        run:
-          echo ${{ env.REF_NAME }}
 
     outputs:
       ref-name: ${{ env.REF_NAME }}
+      version: ${{ env.TAG_VERSION }}
 
   # Update version
   version:
@@ -98,8 +88,9 @@ jobs:
 
       - name: Get version of the tag
         run: |
-          TAG=$(echo $GITHUB_REF | sed -e 's,.*/\(.*\),\1,')
-          echo "TAG=$TAG" >> $GITHUB_ENV
+          Show tag
+          echo ${{ needs.prepare.outputs.version }}
+          echo "TAG=$(echo ${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
 
       - name: Print the tag
         run: echo $TAG
