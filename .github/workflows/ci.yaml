@@ -28,7 +28,7 @@ jobs:
 
       - name: Check tag is correct
         id: semver
-        if: ${{ needs.tag.outputs.TAG == 'true' }}
+        if: ${{ env.TAG == 'true' }}
         run: |
           SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
           if [[ ${{ github.ref }} =~ refs/tags/$SEMVER_REGEX ]]; then
