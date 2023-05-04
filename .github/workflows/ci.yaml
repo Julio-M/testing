@@ -31,7 +31,7 @@ jobs:
         if: ${{ needs.tag.outputs.TAG == 'true' }}
         run: |
           SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
-          if [[ ${{ github.ref }} =~ $SEMVER_REGEX ]]; then
+          if [[ ${{ github.ref }} =~ refs/tags/$SEMVER_REGEX ]]; then
             echo "semver"
             echo "SEMVER=true" >> $GITHUB_ENV
           else
@@ -44,7 +44,6 @@ jobs:
         id: ref-name
         # Check if the tag is a semantic version and if in the push event there was a tag
         run: |
-          SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
           if [[ ${{ github.ref }} == refs/tags/* ]]; then
             echo "release"
             echo "REF_NAME=release" >> $GITHUB_ENV
