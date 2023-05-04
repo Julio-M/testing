@@ -26,7 +26,7 @@ jobs:
       - name: Check if there was a tag in the commit
         id: tag
         run: |
-          if [[ ${{ env.COMMIT_MESSAGE }} =~ ^release:[[:space:]]v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ ${{ env.COMMIT_MESSAGE }} =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
             echo "true"
             echo "TAG=true" >> $GITHUB_ENV
             echo "TAG_VERSION=$(echo ${{ env.COMMIT_MESSAGE }} | cut -d ' ' -f 2)" >> $GITHUB_ENV
