@@ -132,7 +132,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.version.outputs.version }}
+          tag_name: v${{ needs.version.outputs.version }}
           body: |
             ${{ github.workspace }}-CHANGELOG.txt
           draft: false
