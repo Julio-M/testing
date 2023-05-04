@@ -139,19 +139,6 @@ jobs:
             $(git log --pretty=format:"%h - %an, %ar : %s")
           draft: false
           prerelease: false
-      
-      - name: Create release and tag
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.prepare.outputs.version }}
-          release_name: Release ${{ needs.prepare.outputs.version }}
-          body: |
-            $(git log --pretty=format:"%h - %an, %ar : %s")
-          draft: false
-          prerelease: false
   
   delete-branch:
     name: 'Delete branch 🗑️'
