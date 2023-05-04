@@ -140,8 +140,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           target_commitish: ${{ needs.version.outputs.branch-name }}
 
-      outputs:
-        tag-branch: ${{ needs.version.outputs.branch-name }}
+    outputs:
+      tag-branch: ${{ needs.version.outputs.branch-name }}
     
   
   delete-branch:
