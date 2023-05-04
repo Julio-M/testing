@@ -93,6 +93,32 @@ jobs:
           git commit -m "Update version"
           git push
       
+  create-release:
+
+    name: 'Create release 🚀'
+    needs: 
+      - prepare
+      - version
+    runs-on: ubuntu-latest
+    if: ${{ needs.prepare.outputs.ref-name == 'release' }}
+
+    steps:
+      - name: Checkout repository branch release
+        uses: actions/checkout@v3
+        with:
+          ref: release
+          fetch-depth: 0
+
+      - name: Update release branch
+        run: |
+          git fetch --all
+          git pull --all
+
+      - name: Git config
+        run: |
+          git config --global user.email "github-actions@example.com"
+          git config --global user.name "github-actions"
+      
       - name: Create release and tag
         uses: actions/create-release@v1
         id: create_release
