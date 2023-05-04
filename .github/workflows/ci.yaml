@@ -75,7 +75,6 @@ jobs:
 
       - name: Get version of the tag
         run: |
-          Show tag
           echo ${{ needs.prepare.outputs.version }}
           echo "TAG=$(echo ${{ needs.prepare.outputs.version }}") >> $GITHUB_ENV
 
