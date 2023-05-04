@@ -86,7 +86,7 @@ jobs:
 
       - name: Define branch name
         run: |
-          echo "BRANCH_NAME=release/${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=rel/${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
 
       - name: Create new branch
         run: |
