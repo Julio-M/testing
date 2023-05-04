@@ -91,7 +91,7 @@ jobs:
         run: |
           git add package.json
           git commit -m "Update version"
-          git push --set-upstream origin $VERSION
+          git push --set-upstream origin release/$TAG
           echo "BRANCH_NAME=release/$TAG" >> $GITHUB_ENV
 
     outputs:
