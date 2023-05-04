@@ -85,18 +85,14 @@ jobs:
         run: cat package.json
 
       - name: Print the version
-        run: echo $VERSION
+        run: echo $TAG
 
-      - name: Checkout to new branch
-        run: |
-          git checkout -b $VERSION
-
-      - name: Create new branch with $VERSION
+      - name: Create new branch with $TAG
         run: |
           git add package.json
           git commit -m "Update version"
           git push --set-upstream origin $VERSION
-          echo "BRANCH_NAME=$VERSION" >> $GITHUB_ENV
+          echo "BRANCH_NAME=release/$TAG" >> $GITHUB_ENV
 
     outputs:
       branch-name: ${{ env.BRANCH_NAME }}
@@ -151,12 +147,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository branch tag
+
+      # DELETE THE VERSION BRANCH THAT WAS USED FOR THE RELEASE
+      - name: Checkout repository branch release/$VERSION
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.create-release.outputs.tag-branch }}
           fetch-depth: 0
-      
+
       - name: Delete branch
         run: |
           git push origin --delete ${{ needs.create-release.outputs.tag-branch }}
