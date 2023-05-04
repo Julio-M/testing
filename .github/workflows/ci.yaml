@@ -113,7 +113,7 @@ jobs:
       - name: Checkout repository branch release/$VERSION
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.version.outputs.branch-name }}}
+          ref: ${{ needs.version.outputs.branch-name }}
           fetch-depth: 0
 
       - name: Update release branch
