@@ -84,12 +84,12 @@ jobs:
       - name: Print package.json
         run: cat package.json
 
-      - name: Print the version
-        run: echo $TAG
-
-      - name: Checkout to a new branch release/$TAG
+      - name: Define branch name
         run: |
           echo "BRANCH_NAME=release/${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
+
+      - name: Create new branch
+        run: |
           git checkout -b ${{ env.BRANCH_NAME }}
 
       - name: Push to new branch
