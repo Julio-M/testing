@@ -43,6 +43,7 @@ jobs:
 
     outputs:
       ref-name: ${{ env.REF_NAME }}
+      tag: ${{ env.TAG }}
       version: ${{ env.TAG_VERSION }}
 
   # Update version
@@ -74,7 +75,7 @@ jobs:
           node-version: 16
 
       - name: Print the tag
-        run: echo $TAG
+        run: echo ${{ needs.prepare.outputs.tag }}
 
       - name: Patch the version using TAG and NPM
         run: |
@@ -89,14 +90,14 @@ jobs:
 
       - name: Checkout to a new branch release/$TAG
         run: |
-          git checkout -b release/$TAG
+          echo "BRANCH_NAME=release/${{ needs.prepare.outputs.tag }}" >> $GITHUB_ENV
+          git checkout -b {{ env.BRANCH_NAME }}
 
       - name: Push to new branch
         run: |
           git add package.json
           git commit -m "Update version"
-          git push --set-upstream origin release/$TAG
-          echo "BRANCH_NAME=release/$TAG" >> $GITHUB_ENV
+          git push --set-upstream origin ${{ env.BRANCH_NAME }}
 
     outputs:
       branch-name: ${{ env.BRANCH_NAME }}
