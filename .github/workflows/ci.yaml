@@ -45,7 +45,7 @@ jobs:
         # Check if the tag is a semantic version and if in the push event there was a tag
         run: |
           SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
-          if [[ ${{ github.ref }} == refs/tags/*]]; then
+          if [[ ${{ github.ref }} == refs/tags/* ]]; then
             echo "release"
             echo "REF_NAME=release" >> $GITHUB_ENV
           else
