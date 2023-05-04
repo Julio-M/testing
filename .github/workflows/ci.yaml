@@ -15,7 +15,7 @@ jobs:
 
     steps:
 
-      - name: Check if git push --tag was used
+      - name: Check if there was a tag in the push event
         id: tag
         run: |
           if [[ ${{ github.ref }} == refs/tags/* ]]; then
@@ -31,7 +31,7 @@ jobs:
         id: semver
         if: ${{ env.TAG == 'true' }}
         run: |
-          SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+          
           if [[ ${{ env.TAG_VERSION }} =~ $SEMVER_REGEX ]]; then
             echo "semver"
             echo "SEMVER=true" >> $GITHUB_ENV
@@ -45,9 +45,10 @@ jobs:
         id: ref-name
         # Check if the tag is a semantic version and if in the push event there was a tag
         run: |
-          if [[ ${{ github.ref }} == refs/tags/* ]]; then
+          SEMVER_REGEX="^(v?)(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+          if [[ ${{ env.TAG}} == 'true' && ${{ env.TAG_VERSION }} =~ $SEMVER_REGEX ]]; then
             echo "release"
-            echo "REF_NAME=release" >> $GITHUB_ENV
+            echo "REF_NAME=release" >> $GITHUB_ENV 
           else
             echo "not-release"
             echo "REF_NAME=not-release" >> $GITHUB_ENV
