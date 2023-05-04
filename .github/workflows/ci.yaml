@@ -92,26 +92,28 @@ jobs:
           git add package.json
           git commit -m "Update version"
       
-      - name: Create new branch with release/$VERSION
+      - name: Create new branch with $VERSION
         run: |
-          git checkout -b release/$VERSION
-          git push --set-upstream origin release/$VERSION
-          echo "BRANCH_NAME=release/$VERSION" >> $GITHUB_ENV
+          git checkout -b $VERSION
+          git push --set-upstream origin $VERSION
+          echo "BRANCH_NAME=$VERSION" >> $GITHUB_ENV
+
+    outputs:
+      branch-name: ${{ env.BRANCH_NAME }}
+      version: ${{ env.VERSION }}
 
   create-release:
 
     name: 'Create release 🚀'
     needs: 
-      - prepare
       - version
     runs-on: ubuntu-latest
-    if: ${{ needs.prepare.outputs.ref-name == 'release' }}
 
     steps:
       - name: Checkout repository branch release/$VERSION
         uses: actions/checkout@v3
         with:
-          ref: release/${{ needs.prepare.outputs.version }}
+          ref: ${{ needs.version.outputs.branch-name }}}
           fetch-depth: 0
 
       - name: Update release branch
@@ -133,8 +135,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.prepare.outputs.version }}
-          release_name: Release ${{ needs.prepare.outputs.version }}
+          tag_name: ${{ needs.version.outputs.version }}
+          release_name: Release ${{ needs.version.outputs.version }}
           body: |
             $(git log --pretty=format:"%h - %an, %ar : %s")
           draft: false
