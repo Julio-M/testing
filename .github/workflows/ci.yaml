@@ -137,6 +137,7 @@ jobs:
         with:
           tag_name: ${{ needs.version.outputs.version }}
           release_name: Release ${{ needs.version.outputs.version }}
+          target_commitish: ${{ needs.version.outputs.branch-name }}
           body: |
             $(git log --pretty=format:"%h - %an, %ar : %s")
           draft: false
@@ -151,10 +152,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository branch release/$VERSION
+      - name: Checkout repository branch tag
         uses: actions/checkout@v3
         with:
-          ref: release/${{ needs.prepare.outputs.version }}
+          ref: ${{ needs.prepare.outputs.version }}
           fetch-depth: 0
 
       - name: Update release branch
