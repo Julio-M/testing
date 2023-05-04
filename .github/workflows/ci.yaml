@@ -15,6 +15,17 @@ jobs:
 
     steps:
 
+      - name: Check if git push --tag was used
+        id: tag
+        run: |
+          if [[ ${{ github.ref }} == refs/tags/* ]]; then
+            echo "tag"
+            echo "TAG=true" >> $GITHUB_ENV
+          else
+            echo "not-tag"
+            echo "TAG=false" >> $GITHUB_ENV
+          fi
+
       - name: Set ref name
         id: ref-name
         # Check if the tag is a semantic version and if in the push event there was a tag
