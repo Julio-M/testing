@@ -129,19 +129,17 @@ jobs:
           git config --global user.email "github-actions@example.com"
           git config --global user.name "github-actions"
 
-      - name: Create release and tag with the latest version in the source code assets
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.version.outputs.version }}
-          release_name: Release ${{ needs.version.outputs.version }}
-          target_commitish: ${{ needs.version.outputs.branch-name }}
           body: |
-            $(git log --pretty=format:"%h - %an, %ar : %s")
+            ${{ github.workspace }}-CHANGELOG.txt
           draft: false
           prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target_commitish: ${{ needs.version.outputs.branch-name }}
+    
   
   delete-branch:
     name: 'Delete branch 🗑️'
