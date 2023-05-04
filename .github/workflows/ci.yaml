@@ -139,13 +139,14 @@ jobs:
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
           target_commitish: ${{ needs.version.outputs.branch-name }}
+
+      outputs:
+        tag-branch: ${{ needs.version.outputs.branch-name }}
     
   
   delete-branch:
     name: 'Delete branch 🗑️'
     needs: 
-      - prepare
-      - version
       - create-release
     runs-on: ubuntu-latest
 
@@ -153,11 +154,9 @@ jobs:
       - name: Checkout repository branch tag
         uses: actions/checkout@v3
         with:
-          ref: ${{ needs.prepare.outputs.version }}
+          ref: ${{ needs.create-release.outputs.tag-branch }}
           fetch-depth: 0
       
       - name: Delete branch
         run: |
-          git checkout release
-          git branch -D ${{ needs.prepare.outputs.version }}
-          git push origin --delete ${{ needs.prepare.outputs.version }}
+          git push origin --delete ${{ needs.create-release.outputs.tag-branch }}
