@@ -90,7 +90,7 @@ jobs:
       - name: Checkout to a new branch release/$TAG
         run: |
           echo "BRANCH_NAME=release/${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
-          git checkout -b {{ env.BRANCH_NAME }}
+          git checkout -b ${{ env.BRANCH_NAME }}
 
       - name: Push to new branch
         run: |
