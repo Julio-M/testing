@@ -159,5 +159,5 @@ jobs:
       - name: Delete branch
         run: |
           git checkout release
-          git branch -D release/${{ needs.prepare.outputs.version }}
-          git push origin --delete release/${{ needs.prepare.outputs.version }}
+          git branch -D ${{ needs.prepare.outputs.version }}
+          git push origin --delete ${{ needs.prepare.outputs.version }}
