@@ -28,7 +28,7 @@ jobs:
           fi
 
       - name: Set ref name
-        if: ${{ env.TAG }} == 'true'
+        if: ${{ env.TAG == 'true' }}
         id: ref-name
         # Check if the tag is a semantic version and if in the push event there was a tag
         run: |
