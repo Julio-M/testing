@@ -114,6 +114,9 @@ jobs:
           git fetch --all
           git pull --all
 
+      - name: Show package.json
+        run: cat package.json
+
       - name: Git config
         run: |
           git config --global user.email "github-actions@example.com"
@@ -127,5 +130,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.version }}
           release_name: Release ${{ needs.prepare.outputs.version }}
+          body: |
+            $(git log --pretty=format:"%h - %an, %ar : %s")
           draft: false
           prerelease: false
