@@ -91,8 +91,13 @@ jobs:
         run: |
           git add package.json
           git commit -m "Update version"
-          git push
       
+      - name: Create new branch with release/$VERSION
+        run: |
+          git checkout -b release/$VERSION
+          git push --set-upstream origin release/$VERSION
+          echo "BRANCH_NAME=release/$VERSION" >> $GITHUB_ENV
+
   create-release:
 
     name: 'Create release 🚀'
@@ -103,10 +108,10 @@ jobs:
     if: ${{ needs.prepare.outputs.ref-name == 'release' }}
 
     steps:
-      - name: Checkout repository branch release
+      - name: Checkout repository branch release/$VERSION
         uses: actions/checkout@v3
         with:
-          ref: release
+          ref: release/${{ needs.prepare.outputs.version }}
           fetch-depth: 0
 
       - name: Update release branch
@@ -121,6 +126,19 @@ jobs:
         run: |
           git config --global user.email "github-actions@example.com"
           git config --global user.name "github-actions"
+
+      - name: Create release and tag with the latest version in the source code assets
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.prepare.outputs.version }}
+          release_name: Release ${{ needs.prepare.outputs.version }}
+          body: |
+            $(git log --pretty=format:"%h - %an, %ar : %s")
+          draft: false
+          prerelease: false
       
       - name: Create release and tag
         uses: actions/create-release@v1
@@ -134,3 +152,34 @@ jobs:
             $(git log --pretty=format:"%h - %an, %ar : %s")
           draft: false
           prerelease: false
+  
+  delete-branch:
+    name: 'Delete branch 🗑️'
+    needs: 
+      - prepare
+      - version
+      - create-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository branch release/$VERSION
+        uses: actions/checkout@v3
+        with:
+          ref: release/${{ needs.prepare.outputs.version }}
+          fetch-depth: 0
+
+      - name: Update release branch
+        run: |
+          git fetch --all
+          git pull --all
+
+      - name: Git config
+        run: |
+          git config --global user.email "github-actions@example.com"
+          git config --global user.name "github-actions"
+      
+      - name: Delete branch
+        run: |
+          git checkout release
+          git branch -D release/${{ needs.prepare.outputs.version }}
+          git push origin --delete release/${{ needs.prepare.outputs.version }}
