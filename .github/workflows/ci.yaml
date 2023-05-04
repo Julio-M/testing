@@ -87,7 +87,11 @@ jobs:
       - name: Print the version
         run: echo $TAG
 
-      - name: Create new branch with $TAG
+      - name: Checkout to a new branch release/$TAG
+        run: |
+          git checkout -b release/$TAG
+
+      - name: Push to new branch
         run: |
           git add package.json
           git commit -m "Update version"
