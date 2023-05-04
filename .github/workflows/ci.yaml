@@ -27,20 +27,6 @@ jobs:
             echo "TAG=false" >> $GITHUB_ENV
           fi
 
-      - name: Check tag is correct
-        id: semver
-        if: ${{ env.TAG == 'true' }}
-        run: |
-          
-          if [[ ${{ env.TAG_VERSION }} =~ $SEMVER_REGEX ]]; then
-            echo "semver"
-            echo "SEMVER=true" >> $GITHUB_ENV
-          else
-            echo "not-semver"
-            echo "SEMVER=false" >> $GITHUB_ENV
-          fi
-
-
       - name: Set ref name
         id: ref-name
         # Check if the tag is a semantic version and if in the push event there was a tag
@@ -90,7 +76,7 @@ jobs:
         run: |
           Show tag
           echo ${{ needs.prepare.outputs.version }}
-          echo "TAG=$(echo ${{ needs.prepare.outputs.version }}" >> $GITHUB_ENV
+          echo "TAG=$(echo ${{ needs.prepare.outputs.version }}") >> $GITHUB_ENV
 
       - name: Print the tag
         run: echo $TAG
