@@ -4,3 +4,4 @@ test releases
 tag releases
 sign releases
 email
+release in commits
