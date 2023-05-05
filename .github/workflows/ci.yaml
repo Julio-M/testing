@@ -23,20 +23,20 @@ jobs:
         run: |
           echo "COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})" >> $GITHUB_ENV
 
-      - name: Is there only the tag in the commit message?
-        id: only-tag
-        run: |
-          if [[ "${{ env.COMMIT_MESSAGE }}" == 'v' ]]; then
-            echo "true"
-            echo "ONLY_TAG=true" >> $GITHUB_ENV
-          else
-            echo "false"
-            echo "ONLY_TAG=false" >> $GITHUB_ENV
-          fi
+      # - name: Is there only the tag in the commit message?
+      #   id: only-tag
+      #   run: |
+      #     if [[ "${{ env.COMMIT_MESSAGE }}" == 'v' ]]; then
+      #       echo "true"
+      #       echo "ONLY_TAG=true" >> $GITHUB_ENV
+      #     else
+      #       echo "false"
+      #       echo "ONLY_TAG=false" >> $GITHUB_ENV
+      #     fi
 
       - name: Check if there was a tag in the commit
         # Test with random commit messages yup hmm
-        if: ${{ env.ONLY_TAG == 'true' }}
+        # if: ${{ env.ONLY_TAG == 'true' }}
         id: tag
         run: |
           if [[ '${{ env.COMMIT_MESSAGE }}' =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
