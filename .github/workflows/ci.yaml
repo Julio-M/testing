@@ -23,7 +23,7 @@ jobs:
 
       - name: Check changes
         id: changes
-        run: ./scripts/check_changes.sh
+        run: ./scripts/check-changes.sh
 
   #     - name: Get the commit message
   #       id: commit
