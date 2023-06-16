@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - release
+  pull_request:
+    branches:
+      - release
 
 jobs:
 
@@ -15,17 +18,22 @@ jobs:
       - name: Checkout repository branch release
         uses: actions/checkout@v3
         with:
-          ref: release
           fetch-depth: 0
 
-      - name: CHMOD
-        run: |
-          chmod +x ./.github/scripts/check-merge-changes.sh
+      - name: Run the check-changes.sh
+        if: ${{ github.event_name == 'pull_request' }}
+        run: ./.github/scripts/check-changes.sh
+        shell: bash
 
-      - name: Check if there are changes
-        run: |
-          ./.github/scripts/check-merge-changes.sh
-      
+      - name: Make file executable
+        if: ${{ github.event_name == 'pull_request' }}
+        run: chmod +x ./.github/scripts/check-merge-changes.sh
+        shell: bash
+
+      - name: See changes when merge
+        if: ${{ github.event_name == 'push' }}
+        run: ./.github/scripts/check-merge-changes.sh
+        shell: bash
 
   #     - name: Get the commit message
   #       id: commit
