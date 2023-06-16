@@ -6,7 +6,7 @@ LIST_CHANGED_FILES=()
 
 function changes() {
     # See what files have changed
-    git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }}
+    local CHANGES=$(git diff --name-only --diff-filter=d origin/$GITHUB_BASE_REF..origin/$GITHUB_HEAD_REF)
 }
 
 function check_changes() {
