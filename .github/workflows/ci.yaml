@@ -21,9 +21,9 @@ jobs:
           ref: release
           fetch-depth: 0
 
-      - name: Show files
-        run: |
-          git diff --name-only ${{ github.sha }} $(git merge-base ${{ github.sha }} release)
+      - name: Check changes
+        id: changes
+        run: ./.github/scripts/check-changes.sh
 
   #     - name: Get the commit message
   #       id: commit
