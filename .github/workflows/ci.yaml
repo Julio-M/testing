@@ -27,8 +27,8 @@ jobs:
       - name: Find check-changes.sh
         run: find . -name check-changes.sh
 
-      - name: Show check-changes.sh
-        run: cat .github/scripts/check-changes.sh
+      - name: List all folders
+        run: ls -la .github/scripts
 
       - name: Change permission
         run: chmod +x .github/scripts/check-changes.sh
