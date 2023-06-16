@@ -5,8 +5,9 @@ LIST_CHANGED_FILES=()
 # Fetch the base branch
 
 function changes() {
-  local CHANGES=$(git diff --name-only --diff-filter=d origin/$GITHUB_BASE_REF..origin/$GITHUB_HEAD_REF)
-  echo "$CHANGES"
+    # See if anything changed when pull request
+    CHANGES=$(git diff --name-only $GITHUB_BASE_REF..$GITHUB_HEAD_REF)
+    echo "$CHANGES"
 }
 
 
