@@ -23,8 +23,8 @@ jobs:
 
 
       - name: Run the check-changes.sh
-        run: |
-          bash .github/scripts/check-changes.sh
+        run: ('./.github/scripts/check-changes.sh')
+        shell: bash
 
   #     - name: Get the commit message
   #       id: commit
