@@ -20,21 +20,9 @@ jobs:
         with:
           ref: release
           fetch-depth: 0
-      
-      - name: Show all folders
-        run: ls -la
-
-      - name: Find check-changes.sh
-        run: find . -name check-changes.sh
-
-      - name: List all folders
-        run: ls -la .github/scripts
-
-      - name: Change permission
-        run: chmod +x .github/scripts/check-changes.sh
 
       - name: Run the check-changes.sh
-        run: ('./.github/scripts/check-changes.sh')
+        run: ./.github/scripts/check-changes.sh
         shell: bash
 
   #     - name: Get the commit message
