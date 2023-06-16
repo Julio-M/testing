@@ -26,7 +26,6 @@ jobs:
         shell: bash
 
       - name: Make file executable
-        if: ${{ github.event_name == 'pull_request' }}
         run: chmod +x ./.github/scripts/check-merge-changes.sh
         shell: bash
 
