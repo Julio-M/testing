@@ -3,7 +3,7 @@
 # Check if now that is merged what files were changed
 function changes() {
     # Check what changes were made in the latest commit
-    local CHANGES=$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA)
+    local CHANGES=$(git diff --name-only --diff-filter=d HEAD~1..HEAD)
     echo "$CHANGES"
 }
 
