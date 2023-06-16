@@ -21,9 +21,12 @@ jobs:
           ref: release
           fetch-depth: 0
 
+      
+
       - name: Check changes
         id: changes
-        run: ./scripts/check-changes.sh
+        run: ./github/scripts/check-changes.sh
+        shell: bash
 
   #     - name: Get the commit message
   #       id: commit
