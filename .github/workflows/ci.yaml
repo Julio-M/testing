@@ -22,9 +22,10 @@ jobs:
         run: |
           chmod +x ./.github/scripts/check-merge-changes.sh
 
-      - name: Show files
+      - name: Check if there are changes
         run: |
-          git diff --name-only ${{ github.sha }} $(git merge-base ${{ github.sha }} release)
+          ./.github/scripts/check-merge-changes.sh
+      
 
   #     - name: Get the commit message
   #       id: commit
