@@ -7,6 +7,7 @@ LIST_CHANGED_FILES=()
 function changes() {
     # See what files have changed
     local CHANGES=$(git diff --name-only --diff-filter=d origin/$GITHUB_BASE_REF..origin/$GITHUB_HEAD_REF)
+    echo "$CHANGES"
 }
 
 function check_changes() {
