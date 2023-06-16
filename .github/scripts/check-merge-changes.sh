@@ -1,11 +1,9 @@
 #!/bin/bash
 
-LIST_CHANGED_FILES=()
-
-# Fetch the base branch
-
+# Check if now that is merged what files were changed
 function changes() {
-    local CHANGES=$(git diff --name-only --diff-filter=d origin/$GITHUB_BASE_REF..origin/$GITHUB_HEAD_REF)
+    # Check what changes were made in the latest commit
+    local CHANGES=$(git diff-tree --no-commit-id --name-only -r $GITHUB_SHA)
     echo "$CHANGES"
 }
 
