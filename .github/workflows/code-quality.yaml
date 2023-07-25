@@ -12,12 +12,6 @@ on:
       - staging
     paths-ignore:
       - 'charts/**'
-  push:
-    branches:
-      - dev
-      - staging
-    paths-ignore:
-      - 'charts/**'
 
 permissions:
   contents: read

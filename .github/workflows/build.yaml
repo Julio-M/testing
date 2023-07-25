@@ -1,6 +1,11 @@
 name: Build and push
 
 on:
+  push:
+    branches:
+      - dev
+      - staging
+      - prod
   workflow_dispatch:
     branches:
       - dev
