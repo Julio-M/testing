@@ -23,7 +23,7 @@ on:
 
 jobs:
     code_quality:
-      uses: Julio-M/testing/.github/workflows/code-quality.yaml@main
+      uses: Julio-M/testing/.github/workflows/code-quality.yaml@dev
 
     prepare:
       name: Print branch
