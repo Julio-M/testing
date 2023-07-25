@@ -22,8 +22,8 @@ on:
       - prod
 
 jobs:
-  code_quality:
-    uses: Julio-M/testing/.github/workflows/code-quality.yml@v1
+    code_quality:
+      uses: Julio-M/testing/.github/workflows/code-quality.yml@v1
 
     prepare:
       name: Print branch
