@@ -4,7 +4,6 @@ on:
   workflow_call:
     outputs:
       branch_name:
-        required: true
         type: string
         value: ${{ github.ref_name }}
   pull_request:
