@@ -28,3 +28,6 @@ jobs:
 
       - name: Pass
         run: echo "Pass"
+
+      - name: Hello world
+        run: echo "Hello world"
