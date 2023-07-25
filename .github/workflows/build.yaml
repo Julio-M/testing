@@ -12,9 +12,6 @@ on:
     workflows: [ "Code quality" ]
     types:
       - completed
-    branches:
-        - dev
-        - staging
     paths-ignore:
       - 'charts/**'
   # Run workflow only if the code is release-tagged in prod
@@ -25,16 +22,25 @@ on:
       - prod
 
 jobs:
-    prepare:
-        runs-on: ubuntu-latest
+  code_quality:
+    uses: Julio-M/testing/.github/workflows/code-quality.yml@v1
 
-        steps:
-            - 
-                name: Store_branch
-                id: store_branch
-                uses: actions/github-script@v3
-                with:
-                    github-token: ${{ secrets.GITHUB_TOKEN }}
-                    script: |
-                        const branch_name = context.payload.workflow_run.head_branch;
-                        return branch_name;
+    prepare:
+      name: Print branch
+      runs-on: ubuntu-latest
+      steps:
+        - name: Print branch
+          run: |
+            echo "Branch: ${{ github.ref }}"
+
+
+    get_branch:
+      name: Get branch from code-quality workflow
+      runs-on: ubuntu-latest
+      # Get output from code-quality workflow
+      needs: code_quality
+      steps:
+        - name: Get branch
+          id: get_branch
+          run: |
+            echo "Branch: ${{ needs.code_quality.outputs.branch }}"
