@@ -13,8 +13,8 @@ on:
     types:
       - completed
     branches:
-      - dev
-      - staging
+        - dev
+        - staging
     paths-ignore:
       - 'charts/**'
   # Run workflow only if the code is release-tagged in prod
@@ -31,5 +31,3 @@ jobs:
         steps:
             - 
                 name: Check ref
-                run: |
-                    echo "Ref name: ${{ github.event.workflow_run.head_branch }}"
