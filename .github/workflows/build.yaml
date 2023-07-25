@@ -30,7 +30,6 @@ jobs:
 
         steps:
             - 
-                name: Check ref name
+                name: Check ref
                 run: |
-                    echo "Ref name: ${{ github.ref_name }}"
-
+                    echo "Ref name: ${{ github.event.workflow_run.head_branch }}"
