@@ -1,0 +1,30 @@
+name: Code quality
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - staging
+    paths-ignore:
+      - 'charts/**'
+  push:
+    branches:
+      - dev
+      - staging
+    paths-ignore:
+      - 'charts/**'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+  
+      - uses: actions/checkout@v2
+
+      - name: Pass
+        run: echo "Pass"
