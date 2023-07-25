@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       branch_name:
-        type: string
+        description: "The first output string"
         value: ${{ github.ref_name }}
   pull_request:
     branches:
