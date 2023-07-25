@@ -25,12 +25,17 @@ on:
       - prod
 
 jobs:
-    prepare:
-        runs-on: ubuntu-latest
+  job1:
+    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@dev'
 
-        steps:
-            - 
-                name: Check ref name
-                run: |
-                    echo "Ref name: ${{ github.ref_name }}"
+  job2:
+
+    runs-on: ubuntu-latest
+    needs: job1
+    steps:
+
+      - name: Print branch name
+        run: |
+          echo "Branch name: ${{ needs.job1.outputs.branch_name }}"
+
 

@@ -1,6 +1,11 @@
 name: Code quality
 
 on:
+  workflow_call:
+    outputs:
+      branch_name:
+        description: "The first output string"
+        value: ${{ github.ref_name }}
   pull_request:
     branches:
       - dev
@@ -28,3 +33,13 @@ jobs:
 
       - name: Pass
         run: echo "Pass"
+
+      - name: Hello world
+        run: echo "Hello world"
+
+      - name: Print ref
+        run: echo ${{ github.ref }}
+
+      - name: Store branch
+        id: store_branch
+        run: echo "branch_name=${{github.ref_name}}" >> $GITHUB_OUTPUT
