@@ -34,3 +34,7 @@ jobs:
 
       - name: Print ref
         run: echo ${{ github.ref }}
+
+      - name: Store branch
+        id: store_branch
+        run: echo "branch_name=${{github.ref_name}}" >> $GITHUB_OUTPUT

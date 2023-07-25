@@ -30,4 +30,11 @@ jobs:
 
         steps:
             - 
-                name: Check ref
+                name: Store_branch
+                id: store_branch
+                uses: actions/github-script@v3
+                with:
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
+                    script: |
+                        const branch_name = context.payload.workflow_run.head_branch;
+                        return branch_name;
