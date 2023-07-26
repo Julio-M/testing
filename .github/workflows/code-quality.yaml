@@ -12,12 +12,6 @@ on:
       - staging
     paths-ignore:
       - 'charts/**'
-  push:
-    branches:
-      - dev
-      - staging
-    paths-ignore:
-      - 'charts/**'
 
 permissions:
   contents: read
@@ -43,3 +37,6 @@ jobs:
       - name: Store branch
         id: store_branch
         run: echo "branch_name=${{github.ref_name}}" >> $GITHUB_OUTPUT
+
+      - name: Fail on purpose
+        run: exit 1
