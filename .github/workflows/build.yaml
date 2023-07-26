@@ -43,8 +43,8 @@ jobs:
   job2:
 
     runs-on: ubuntu-latest
-    # needs dev or staging depending on the branch
-    needs: [ dev-code-quality]
+    needs: [ dev-code-quality, staging-code-quality ]
+    if: needs.dev-code-quality.result == 'success' || needs.staging-code-quality.result == 'success'
     steps:
       - name: Print branch name
         run: |
