@@ -38,5 +38,5 @@ jobs:
         id: store_branch
         run: echo "branch_name=${{github.ref_name}}" >> $GITHUB_OUTPUT
 
-      - name: Fail on purpose
-        run: exit 1
+      # - name: Fail on purpose
+      #   run: exit 1
