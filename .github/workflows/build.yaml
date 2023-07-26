@@ -32,13 +32,19 @@ on:
 
 jobs:
 
-  job1:
-    uses: Julio-M/testing/.github/workflows/code-quality.yaml@${{ github.sha }}
+  dev-code-quality:
+    if: github.ref == 'refs/heads/dev'
+    uses: Julio-M/testing/.github/workflows/code-quality.yaml@$dev
+  
+  staging-code-quality:
+    if: github.ref == 'refs/heads/staging'
+    uses: Julio-M/testing/.github/workflows/code-quality.yaml@$staging
 
   job2:
 
     runs-on: ubuntu-latest
-    needs: job1
+    # needs dev or staging depending on the branch
+    needs: ${{ github.ref_name }}-code-quality
     steps:
 
       - name: Print branch name
