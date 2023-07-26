@@ -33,8 +33,15 @@ env:
   BRANCH_NAME: ${{ github.ref_name }}
 
 jobs:
-  job1:
-    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@${{ env.BRANCH_NAME }}'
+  job0:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print branch name
+        run: |
+          echo "Branch name: ${{ env.BRANCH_NAME }}"
+  # job1:
+  #   uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@${{ env.BRANCH_NAME }}'
 
   job2:
 
