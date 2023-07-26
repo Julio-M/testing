@@ -33,7 +33,7 @@ on:
 jobs:
 
   code-quality:
-    uses: code-quality.yaml@main
+    uses: Julio-M/testing/.github/workflows/code-quality.yaml@main
 
   job2:
 
