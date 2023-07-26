@@ -32,20 +32,16 @@ on:
 
 jobs:
 
-  dev-code-quality:
-    if: github.ref == 'refs/heads/dev'
-    uses: Julio-M/testing/.github/workflows/code-quality.yaml@$dev
-  
-  staging-code-quality:
-    uses: Julio-M/testing/.github/workflows/code-quality.yaml@$main
+  code-quality:
+    uses: Julio-M/testing/.github/workflows/code-quality.yaml@main
 
   job2:
 
     runs-on: ubuntu-latest
-    # needs dev or staging depending on the branch
-    needs: ${{ github.ref_name }}-code-quality
+    # Only run this job if the code quality checks from one of the previous jobs are fine, only one job needs to be fine
+    needs: 
+      - code-quality
     steps:
-
       - name: Print branch name
         run: |
           echo "Branch name: ${{ github.ref_name }}
