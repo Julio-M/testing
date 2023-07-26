@@ -31,7 +31,7 @@ on:
 
 jobs:
   job1:
-    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@dev'
+    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@$${{ github.ref_name }}'
 
   job2:
 
@@ -41,6 +41,6 @@ jobs:
 
       - name: Print branch name
         run: |
-          echo "Branch name: ${{ needs.job1.outputs.branch_name }}"
+          echo "Branch name: ${{ github.ref_name }}
 
 
