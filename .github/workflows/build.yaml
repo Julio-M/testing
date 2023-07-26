@@ -39,7 +39,8 @@ jobs:
     steps:
       - name: Print branch name
         run: |
-          echo "Branch name: ${{ env.BRANCH_NAME }}"
+          echo "Branch name: Julio-M/testing/.github/workflows/code-quality.yaml@${{ env.BRANCH_NAME }}"
+
   # job1:
   #   uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@${{ env.BRANCH_NAME }}'
 
