@@ -29,9 +29,13 @@ on:
     branches:
       - prod
 
+  env:
+    # Set the branch name as an environment variable
+    BRANCH_NAME: ${{ github.ref_name }}
+
 jobs:
   job1:
-    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@$${{ github.ref_name }}'
+    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@${{ env.BRANCH_NAME }}'
 
   job2:
 
