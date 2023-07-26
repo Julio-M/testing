@@ -33,16 +33,7 @@ on:
 jobs:
 
   code-quality:
-    # If branch is dev
-    runs-on: ubuntu-latest
-    steps:
-      - name: Code quality for dev
-        if: ${{ github.ref == 'refs/heads/dev' }}
-        uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@dev'
-      
-      - name: Code quality for staging
-        if: ${{ github.ref == 'refs/heads/staging' }}
-        uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@staging'
+    uses: code-quality.yaml@main
 
   job2:
 
