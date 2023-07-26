@@ -31,9 +31,9 @@ on:
       
 
 jobs:
-  
+
   job1:
-    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@$${{ trim(github.ref_name) }}'
+    uses: 'Julio-M/testing/.github/workflows/code-quality.yaml@$${{trim(github.ref_name)}}'
 
   job2:
 
