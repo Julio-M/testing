@@ -44,6 +44,6 @@ jobs:
     steps:
       - name: Print branch name
         run: |
-          echo "Branch name: ${{ github.ref_name }}
+          echo "Branch name: ${{ github.ref_name }}"
 
 
