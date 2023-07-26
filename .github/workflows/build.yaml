@@ -13,15 +13,15 @@ on:
     paths-ignore:
       - 'charts/**'
   # Run workflow only if the code quality checks are fine for dev and staging
-  workflow_run:
-    workflows: [ "Code quality" ]
-    types:
-      - completed
-    branches:
-      - dev
-      - staging
-    paths-ignore:
-      - 'charts/**'
+  # workflow_run:
+  #   workflows: [ "Code quality" ]
+  #   types:
+  #     - completed
+  #   branches:
+  #     - dev
+  #     - staging
+  #   paths-ignore:
+  #     - 'charts/**'
   # Run workflow only if the code is release-tagged in prod
   release:
     # Types of releases to trigger this workflow
