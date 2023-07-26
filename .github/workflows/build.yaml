@@ -43,8 +43,9 @@ jobs:
   job2:
 
     runs-on: ubuntu-latest
-    needs: [ dev-code-quality, staging-code-quality ]
-    if: needs.dev-code-quality.result == 'success' || needs.staging-code-quality.result == 'success'
+    # Only run this job if the code quality checks from one of the previous jobs are fine, only one job needs to be fine
+    needs: 
+      - dev-code-quality || staging-code-quality
     steps:
       - name: Print branch name
         run: |
