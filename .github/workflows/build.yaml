@@ -37,8 +37,7 @@ jobs:
     uses: Julio-M/testing/.github/workflows/code-quality.yaml@$dev
   
   staging-code-quality:
-    if: github.ref == 'refs/heads/staging'
-    uses: Julio-M/testing/.github/workflows/code-quality.yaml@$staging
+    uses: Julio-M/testing/.github/workflows/code-quality.yaml@$main
 
   job2:
 
